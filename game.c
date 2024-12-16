@@ -24,12 +24,10 @@ struct room *crt_room = &room1;
 struct room *prv_room = NULL;
 struct room *tmp_room = NULL;
 
-char game_status;
 int escaped_room;
 
 void play_game()
 {
-    game_status = 'C';
     escaped_room = 0;
 
     printf("\n====================================");
@@ -112,6 +110,12 @@ void play_game()
         {
             if (crt_room->is_unsafe == 0 && crt_room->is_looted == 0 && crt_room->room_item != NULL)
             {
+                if (strcmp(crt_room->room_item->name, "treasure") == 0)
+                {
+                    printf("\n> treasure is collected. game is over.\n");
+                    break;
+                }
+
                 pickup_item(&crt_player, crt_room->room_item);
                 crt_room->is_looted = 1;
                 printf("\n> %s is picked.\n", crt_room->room_item->name);
@@ -130,8 +134,7 @@ void play_game()
                 }
                 else
                 {
-                    printf("\n> player is killed by %s.\n", crt_room->room_creature->name);
-                    game_status = 'L';
+                    printf("\n> player is killed by %s. game is over.\n", crt_room->room_creature->name);
                     break;
                 }
             }
@@ -157,7 +160,7 @@ void set_game(char *plyr_name, int plyr_health)
     crt_player.name = plyr_name;
     crt_player.health = plyr_health;
 
-    for (int i = 0;i < INVENTORY_CAPACITY;i++)
+    for (int i = 0; i < INVENTORY_CAPACITY; i++)
     {
         crt_player.inventory[i].heal = -1;
         crt_player.inventory[i].attack = -1;
